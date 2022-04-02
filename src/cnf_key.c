@@ -14,24 +14,24 @@
  *   of variables set (by decisions) or implied (by unit resolution))
  * --the state of this cnf is identified by a key, which is a bit vector
  * --a cache entry contains a key (cnf) and a cached value (model count, or nnf node)
- * --a key has a hash code, which indexes its cache entry into the cache (array 
- *   of collision lists) 
+ * --a key has a hash code, which indexes its cache entry into the cache (array
+ *   of collision lists)
  *
  * keys and their hash codes are computed dynamically each time a vtree node is
  * visited during model counting or compilation.
  *
  * the space for keys (bit vectors) is allocated before counting/compilation starts
  ******************************************************************************/
- 
+
 /******************************************************************************
  * hashcode
  ******************************************************************************/
- 
+
 //computes and stores a hash code for the current key associated with vtree
 void set_vtree_hashcode(DVtree* vtree) {
   c2dSize size = vtree->key_size;
   BYTE* key    = vtree->key;
-  
+
   HASHCODE hashcode = vtree->position; //was 0
   while(size--) hashcode = 31*hashcode + *key++;
   vtree->key_hashcode = hashcode;
@@ -53,24 +53,24 @@ void set_vtree_hashcode(DVtree* vtree) {
 }
 
 //constructs and stores a key for the current cnf associated with a vtree node
-//the key is a bit vector, with one bit for each clause (subsumed or not) and 
+//the key is a bit vector, with one bit for each clause (subsumed or not) and
 //two bits for each variable (free, true, false)
 void construct_vtree_key(DVtree* vtree) {
   assert(vtree->cached_size!=0);
-  
+
   //last cell may be partially filled
   //initializing cells to 0 ensures that padded bits are always 0
   BYTE* cell      = vtree->key; //first cell to be filled
   *cell           = 0; //clear bits of cell
   short bit_count = 0; //next bit to be set in cell
-  
+
   //iterate over context clauses
   for(c2dSize i=0; i<vtree->contextC->size; i++) {
-    Clause* clause = vtree->contextC->set[i]; 
+    Clause* clause = vtree->contextC->set[i];
     BOOLEAN bit = sat_is_subsumed_clause(clause);
     SET_NEXT_BIT(bit);
   }
-  
+
   //bits of literals for context clauses
   for(c2dSize i=0; i<vtree->context_in_vars->size; i++) {
     Var* var = vtree->context_in_vars->set[i];
@@ -86,7 +86,7 @@ void construct_vtree_key(DVtree* vtree) {
     SET_NEXT_BIT(pbit);
     SET_NEXT_BIT(nbit);
   }
- 
+
   set_vtree_hashcode(vtree);
 }
 
@@ -95,7 +95,7 @@ void construct_vtree_key(DVtree* vtree) {
  ******************************************************************************/
 
 //returns the number of bytes needed to store n bits
-static c2dSize bits2bytes(c2dSize n) { 
+static c2dSize bits2bytes(c2dSize n) {
   c2dSize x = 8*sizeof(BYTE);
   return (n%x? (n/x)+1: n/x);
 }
@@ -104,8 +104,8 @@ void allocate_vtree_keys(DVtree* vtree, VtreeManager* manager) {
   vtree->key_size    = 0;
   vtree->key         = NULL;
   vtree->cache_entry = NULL;
-  
-  if(vtree->left!=NULL) {  
+
+  if(vtree->left!=NULL) {
     if(vtree->cached_size!=0) {
       c2dSize size    = vtree->cached_size;
       vtree->key_size = bits2bytes(size);

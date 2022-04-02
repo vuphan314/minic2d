@@ -3,14 +3,14 @@ OS := $(shell uname)
 
 EXEC_FILE = miniC2D
 
-ifeq ($(OS),Darwin) 
+ifeq ($(OS),Darwin)
   LIB := lib/darwin
   BIN := bin/darwin
 else ifeq ($(OS),Linux)
   LIB := lib/linux
   BIN := bin/linux
 else
-  $(error $(EXEC_FILE) is only supported for Mac OS and Linux, not $(OS)) 
+  $(error $(EXEC_FILE) is only supported for Mac OS and Linux, not $(OS))
 endif
 
 CC = g++
@@ -29,7 +29,7 @@ SRC = src/main.c\
       src/count.c\
       src/utilities.c
 
-OBJS=$(SRC:.c=.o) src/getopt.o 
+OBJS=$(SRC:.c=.o) src/getopt.o
 
 c2d: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LFLAGS) -o $(BIN)/$(EXEC_FILE)
@@ -42,4 +42,3 @@ src/getopt.o: src/getopt.c
 
 clean:
 	rm -f $(OBJS) $(BIN)/$(EXEC_FILE)
-

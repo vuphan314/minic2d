@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
   clock_t start_t;
   clock_t start_total_t;
 
-  //construct CNF 
+  //construct CNF
   start_total_t = start_t = clock();
   printf("\nConstructing CNF...");
   sat_state = sat_state_new(options->cnf_filename);
@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
   printf("\n  Learned clauses      \t%"PRIvS"",sat_learned_clause_count(sat_state));
   print_vtree_cache_stats(manager->cache);
   printf("\n  Compile Time\t%0.3fs",((double)(comp_t))/CLOCKS_PER_SEC);
-	
+
   char* nnf_fname = extended_file_name(options->cnf_filename,".nnf");
 
   if(options->in_memory==0) { //save NNF to file
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
     printf("\n  Edges           \t%"PRIvS"",nnf_edge_count(nnf));
   }
   else { //done: no further processing
-    if(options->in_memory) { 
+    if(options->in_memory) {
       c2dSize n_count = 0; c2dSize e_count = 0;
       NNF_NODE root = nnf_manager_get_root(nnf_manager);
       nnf_count_nodes(root,&n_count,&e_count);
@@ -152,7 +152,7 @@ int main(int argc, char* argv[]) {
     sat_state_free(sat_state);
     return 0;
   }
-	
+
   //further processing of the nnf is required
   if(options->count_models) {
     start_t = clock();
@@ -163,7 +163,7 @@ int main(int argc, char* argv[]) {
     printf("%0.3fs",((double)clock()-start_t)/CLOCKS_PER_SEC);
     free(str);
   }
-	
+
   if(options->check_entail) {
     BOOLEAN decomposable = 1;
     start_t = clock();
@@ -171,7 +171,7 @@ int main(int argc, char* argv[]) {
     if(nnf_decomposable(nnf)) printf("OK / ");
     else {
       decomposable = 0;
-      printf("Failed!!! / "); 
+      printf("Failed!!! / ");
     }
     printf("%0.3fs",((double)clock()-start_t)/CLOCKS_PER_SEC);
     start_t = clock();

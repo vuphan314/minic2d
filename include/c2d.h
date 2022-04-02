@@ -40,7 +40,7 @@ typedef unsigned char BYTE; // BYTE must be unsigned so that shifting works corr
 typedef unsigned long HASHCODE;
 
 /******************************************************************************
- * typedefs for nnf_api 
+ * typedefs for nnf_api
  ******************************************************************************/
 
 typedef unsigned long* NNF_NODE;
@@ -48,7 +48,7 @@ typedef struct nnf Nnf;
 typedef struct nnf_manager NnfManager;
 
 /******************************************************************************
- * typedefs for sat_api 
+ * typedefs for sat_api
  ******************************************************************************/
 
 typedef struct var_t Var;
@@ -111,16 +111,16 @@ typedef struct decision_vtree_t {
 
   //position of vtree node in the vtree inorder
   c2dSize position; //start from 0
-  
+
   c2dSize var_count; //number of variables in vtree
   Var* var;          //cnf variable associated with vtree (only for leaves)
-  
+
   //cnf clause/variable sets
   Cset* contextC;         //clauses that have variables inside and outside vtree
   Vset* context_out_vars; //vars of context clauses that are outside vtree
   Vset* context_in_vars;  //vars of context clauses that are inside  vtree
   c2dSize cached_size;    //context + 2*context_in_vars
-  
+
   //cache
   BOOLEAN live_cache;
   BYTE* key;
@@ -137,7 +137,7 @@ typedef union vtree_cache_value_t {
   c2dWmc   count; //to cache (weighted) model counts
   NNF_NODE node;  //to cache nnf nodes
 } VtreeCV;
- 
+
 typedef struct vtree_cache_entry_t {
   DVtree* vtree;  //the vtree node that generated this entry
   BYTE* key;      //a pointer to the starting cell where the key is stored
@@ -147,7 +147,7 @@ typedef struct vtree_cache_entry_t {
   struct vtree_cache_entry_t* next;
 
   //keeping track of prev entry in collision list
-  struct vtree_cache_entry_t** prev_next; 
+  struct vtree_cache_entry_t** prev_next;
 
   //a pointer to the next cache entry in the list of cache entries for a given vtree
   struct vtree_cache_entry_t* vtree_next;
@@ -165,13 +165,13 @@ typedef struct vtree_cache_t {
 /******************************************************************************
  * structure for vtree manager
  ******************************************************************************/
- 
+
 typedef struct vtree_manager_t {
   DVtree* vtree;     //vtree associated with the manager
   VtreeCache* cache; //cache associated with the manager
   DVtree** var_map;  //var_map[i] is the leaf vtree whose variable has index i>0
 } VtreeManager;
- 
+
 /******************************************************************************
  * APIs for nnf manager, sat solver, and vtree manager
  ******************************************************************************/

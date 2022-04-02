@@ -28,16 +28,16 @@ const char* c2d_version();
 #define COUNTER      0;
 
 /******************************************************************************
- * miniC2D options 
+ * miniC2D options
  ******************************************************************************/
 
 c2dOptions* init_options() {
   c2dOptions* options = (c2dOptions*) malloc(sizeof(c2dOptions));
 
   options->cnf_filename       = NULL;
-  options->vtree_in_filename  = NULL;           
+  options->vtree_in_filename  = NULL;
   options->vtree_out_filename = NULL;
-  options->vtree_dot_filename = NULL; 
+  options->vtree_dot_filename = NULL;
   options->vtree_type         = VTREE_TYPE;
   options->vtree_method       = VTREE_METHOD;
   options->vtree_count        = VTREE_COUNT;
@@ -102,10 +102,10 @@ c2dOptions* get_options(int argc, char** argv) {
   //if help is asked, print it and exit
   if(options->help) print_help(C2D_PACKAGE,0);
 
-  //checking validity of options  
-  if(options->cnf_filename==NULL) 
+  //checking validity of options
+  if(options->cnf_filename==NULL)
     print_error_and_exit("must specify a CNF file",C2D_PACKAGE,1);
-  if(options->vtree_type!='p' && options->vtree_type!='i') 
+  if(options->vtree_type!='p' && options->vtree_type!='i')
     print_error_and_exit("option -t must be 'p' or 'i'",C2D_PACKAGE,1);
   if(options->vtree_method < 0 || options->vtree_method > 4)
     print_error_and_exit("option -m must be 0, 1, 2, 3 or 4",C2D_PACKAGE,1);
@@ -135,12 +135,12 @@ void print_help(const char* PACKAGE, int exit_value) {
   printf("%s [-c .] [-v .] [-o .] [-d .] [-t .] [-m .] [-b .] [-u .] [-f .] [-s .]   [-i] [-E] [-C] [-W] [-h]\n", PACKAGE);
 
   printf("  --cnf             -c FILE    set input CNF file\n");
- 
+
   printf("  --vtree           -v FILE    set input  VTREE file\n");
   printf("  --vtree_out       -o FILE    set output VTREE file\n");
   printf("  --vtree_dot       -d FILE    set output VTREE (dot) file\n");
 
-  printf("  --vtree_type      -t TYPE    set graph abstraction used in vtree construction\n");  
+  printf("  --vtree_type      -t TYPE    set graph abstraction used in vtree construction\n");
   printf("                               p: primal graph (default)\n");
   printf("                               i: incidence graph\n");
 
@@ -150,7 +150,7 @@ void print_help(const char* PACKAGE, int exit_value) {
   printf("                               2: natural elimination order (1,2,...,n)\n");
   printf("                               3: reverse elimination order\n");
   printf("                               4: minfill elimination order\n");
-    
+
   printf("  --vtree_count     -b COUNT   set the number of vtrees to be generated with options -m 0 and -m 1 (default 25)\n");
 
   printf("  --initial_ubfs    -u FACTOR  set start balance factor when using option -m 1 (default 25, must be between 1 and 49, inclusive)\n");

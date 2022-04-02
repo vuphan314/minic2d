@@ -111,13 +111,13 @@ void sat_mark_var(Var* var);
 void sat_unmark_var(Var* var);
 
 /******************************************************************************
- * literals 
+ * literals
  ******************************************************************************/
 
 //returns the literal with the given index
 Lit* sat_index2literal(c2dLiteral index, const SatState* sat_state);
 
-//returns the index of a literal 
+//returns the index of a literal
 c2dLiteral sat_literal2index(const Lit* lit);
 
 //returns the positive literal of a variable

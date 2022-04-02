@@ -26,14 +26,14 @@ void compile_dispatcher(NNF_NODE* node, Clause** learned_clause, DVtree* vtree, 
  *
  * when a clause is learned during the compilation process, the learned clause must
  * be asserted (and all learned clauses it leads to must also be asserted) before
- * compilation resumes. for that, we backtrack to the assertion level of the learned 
+ * compilation resumes. for that, we backtrack to the assertion level of the learned
  * clause
  ******************************************************************************/
 
 /******************************************************************************
  * main compilation code
  ******************************************************************************/
- 
+
 //hash table capacity (formula caching and unique nodes)
 //primes: 10007, 20011, 30011, 40009, 50021, 65599, 100003, 2015179,  20000003
 #define UNIQUE_TABLE_CAPACITY 20000003
@@ -175,7 +175,7 @@ void compile_dispatcher(NNF_NODE* node, Clause** learned_clause, DVtree* vtree, 
   }
 
   //need to compile
-  if(vtree_is_leaf(vtree)) 
+  if(vtree_is_leaf(vtree))
     compile_vtree_leaf(node,learned_clause,vtree,nnf_manager);
   else if(vtree_is_shannon_node(vtree))
     compile_vtree_shannon(node,learned_clause,vtree,vtree_manager,nnf_manager,sat_state);
@@ -188,7 +188,7 @@ void compile_dispatcher(NNF_NODE* node, Clause** learned_clause, DVtree* vtree, 
     insert_cache(item,vtree,vtree_manager);
   }
 }
- 
+
 /******************************************************************************
  * end
  ******************************************************************************/

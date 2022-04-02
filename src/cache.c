@@ -28,7 +28,7 @@ void copy_key(register BYTE* key1, register BYTE* key2, register c2dSize size);
  * for cnfs that are associated with that vtree node). this additional indexing
  * facilitates dropping cache entries that are associated with a given vtree node
  ******************************************************************************/
- 
+
 /******************************************************************************
  * constructing and freeing a cache
  *
@@ -37,7 +37,7 @@ void copy_key(register BYTE* key1, register BYTE* key2, register c2dSize size);
 
 VtreeCache* construct_vtree_cache(c2dSize capacity) {
   VtreeCache* cache = (VtreeCache*) malloc(sizeof(VtreeCache));
-  
+
   cache->buckets    = (VtreeCE**) calloc(capacity,sizeof(VtreeCE*));
   cache->capacity   = capacity;
   cache->count      = 0;
@@ -62,7 +62,7 @@ void free_vtree_cache(VtreeCache* cache) {
       entry = next;
     }
   }
-  
+
   free(cache->buckets); //free hash table
   free(cache);
 }
@@ -70,10 +70,10 @@ void free_vtree_cache(VtreeCache* cache) {
 /******************************************************************************
  * which vtree nodes to cache at: CRITICAL to performance
  ******************************************************************************/
- 
+
 static BOOLEAN should_cache(const DVtree* vtree) {
-  return vtree->live_cache && 
-         vtree_is_shannon_node(vtree) && 
+  return vtree->live_cache &&
+         vtree_is_shannon_node(vtree) &&
          !sat_is_instantiated_var(vtree_shannon_var(vtree));
 }
 
@@ -86,18 +86,18 @@ static BOOLEAN should_cache(const DVtree* vtree) {
 BOOLEAN lookup_cache(VtreeCV* result, DVtree* vtree, VtreeManager* manager) {
   if(!should_cache(vtree)) return 0;
   assert(vtree->cached_size!=0);
-  
+
   //capture the state of cnf associated with vtree as a bit vector and corresponding hash code
-  construct_vtree_key(vtree); 
+  construct_vtree_key(vtree);
   //the following fields are now current
   BYTE* key         = vtree->key; //bit vector
   c2dSize size      = vtree->key_size;
   HASHCODE hashcode = vtree->key_hashcode;
-    
+
   VtreeCache* cache = manager->cache;
   c2dSize index     = hashcode % cache->capacity;
   VtreeCE* entry    = cache->buckets[index]; //first entry in collision list
-  
+
   while(entry!=NULL) {
     if(vtree==entry->vtree && match_keys(key,entry->key,size)) {
       //hit
@@ -110,21 +110,21 @@ BOOLEAN lookup_cache(VtreeCV* result, DVtree* vtree, VtreeManager* manager) {
 
   //miss
   ++cache->misses;
-  
+
   return 0;
 }
- 
+
 /******************************************************************************
  * insert
  ******************************************************************************/
 
 //inserts a computed value (count or nnf node) into the cache
-//the computed value is associated with the current cnf associated with the vtree node 
+//the computed value is associated with the current cnf associated with the vtree node
 //assumes that lookup_cache has been already called to set the cnf key and hashcode
-void insert_cache(VtreeCV item, DVtree* vtree, VtreeManager* manager) {  
+void insert_cache(VtreeCV item, DVtree* vtree, VtreeManager* manager) {
   if(!should_cache(vtree)) return;
-  assert(vtree->cached_size!=0); 
-    
+  assert(vtree->cached_size!=0);
+
   //key and hashcode are assumed current
   VtreeCache* cache   = manager->cache;
   HASHCODE hashcode   = vtree->key_hashcode;
@@ -132,29 +132,29 @@ void insert_cache(VtreeCV item, DVtree* vtree, VtreeManager* manager) {
   c2dSize key_size    = vtree->key_size;
   c2dSize index       = hashcode % cache->capacity;
   VtreeCE* head_entry = cache->buckets[index]; //head of collision list
-  
+
   //create entry
   VtreeCE* entry   = (VtreeCE*) malloc(sizeof(VtreeCE));
   entry->value     = item;
   entry->vtree     = vtree;
   entry->key       = (BYTE*) calloc(key_size,sizeof(BYTE));
-  copy_key(key,entry->key,key_size); //entry key  
-     
+  copy_key(key,entry->key,key_size); //entry key
+
   //insert into hash table
   entry->next           = head_entry;
-  cache->buckets[index] = entry; 
+  cache->buckets[index] = entry;
   entry->prev_next      = cache->buckets+index;
   if(head_entry!=NULL) head_entry->prev_next = &(entry->next);
-  
+
   //add entry to list of cache entries for vtree
   entry->vtree_next  = vtree->cache_entry;
   vtree->cache_entry = entry;
-  
+
   //update stats
   ++cache->count;
   cache->memory += sizeof(VtreeCE) + sizeof(BYTE)*vtree->key_size;
 }
- 
+
 /******************************************************************************
  * dropping entries
  ******************************************************************************/
@@ -162,7 +162,7 @@ void insert_cache(VtreeCV item, DVtree* vtree, VtreeManager* manager) {
 //removes cache entry from cache
 void drop_cache_entry(VtreeCE* entry, VtreeCache* cache) {
   //remove from collision list
-  *(entry->prev_next) = entry->next; 
+  *(entry->prev_next) = entry->next;
   if(entry->next!=NULL) entry->next->prev_next = entry->prev_next;
   //update stats
   --cache->count;
@@ -174,21 +174,21 @@ void drop_cache_entry(VtreeCE* entry, VtreeCache* cache) {
 //drops all cache entries of vtree and its descendants
 void drop_vtree_cache_entries(DVtree* vtree, VtreeManager* manager) {
   if(vtree->left==NULL) return;
-  
+
   VtreeCache* cache = manager->cache;
   VtreeCE* entry    = vtree->cache_entry;
-  
+
   while(entry!=NULL) {
     VtreeCE* next = entry->vtree_next; //next in vtree list of entries
     drop_cache_entry(entry,cache);
     entry = next;
   }
   vtree->cache_entry = NULL;
-  
+
   drop_vtree_cache_entries(vtree->left,manager);
   drop_vtree_cache_entries(vtree->right,manager);
 }
- 
+
 /******************************************************************************
  * cache stats
  ******************************************************************************/
@@ -228,7 +228,7 @@ void print_vtree_cache_stats(VtreeCache* cache) {
   double ave_cl;
   double ave_key, max_key, min_key;
   clist_size(cache,&max_cl,&ave_cl,&ave_key,&max_key,&min_key);
-  
+
   printf("\nCache stats:");
   printf(     "\n  hit rate   \t%.1f%%",(100.0*cache->hits)/(cache->hits+cache->misses));
   printf(     "\n  lookups    \t%"PRIvS"",cache->hits+cache->misses);
@@ -240,7 +240,7 @@ void print_vtree_cache_stats(VtreeCache* cache) {
 }
 
 /******************************************************************************
- * utilities 
+ * utilities
  ******************************************************************************/
 
 BOOLEAN match_keys(register BYTE* key1, register BYTE* key2, register c2dSize count) {

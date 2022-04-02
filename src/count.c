@@ -26,7 +26,7 @@ void count_dispatcher(c2dWmc* count, Clause** learned_clause, DVtree* vtree, Vtr
  *
  * when a clause is learned during the counting process, the learned clause must
  * be asserted (and all learned clauses it leads to must also be asserted) before
- * counting resumes. for that, we backtrack to the assertion level of the learned 
+ * counting resumes. for that, we backtrack to the assertion level of the learned
  * clause
  ******************************************************************************/
 
@@ -39,7 +39,7 @@ c2dWmc count_vtree(VtreeManager* manager, SatState* sat_state) {
   c2dWmc count;
   Clause* learned_clause = NULL;
   DVtree* vtree          = manager->vtree;
-  
+
   if(sat_assert_unit_clauses(sat_state)) { //unit resolution succeeded
     count_dispatcher(&count,&learned_clause,vtree,manager,sat_state);
     if(learned_clause!=NULL) count = 0; //cnf is inconsistent
@@ -77,7 +77,7 @@ void count_vtree_leaf(c2dWmc* count, Clause** learned_clause, DVtree* vtree) {
  ******************************************************************************/
 
 void count_vtree_decomposed(c2dWmc* count, Clause** learned_clause, DVtree* vtree, VtreeManager* vtree_manager, SatState* sat_state) {
-    
+
   c2dWmc l_count;
   count_dispatcher(&l_count,learned_clause,vtree->left,vtree_manager,sat_state);
   if(*learned_clause!=NULL) {
@@ -88,12 +88,12 @@ void count_vtree_decomposed(c2dWmc* count, Clause** learned_clause, DVtree* vtre
     *count = 0;
     return;
   }
-  
+
   c2dWmc r_count;
   count_dispatcher(&r_count,learned_clause,vtree->right,vtree_manager,sat_state);
   if(*learned_clause!=NULL) {
     drop_vtree_cache_entries(vtree,vtree_manager);
-    return; 
+    return;
   }
 
   assert(*learned_clause==NULL);
@@ -125,7 +125,7 @@ BOOLEAN count_with_literal(c2dWmc* count, Clause** learned_clause, Lit* literal,
 
 void count_vtree_shannon(c2dWmc* count, Clause** learned_clause, DVtree* vtree, VtreeManager* vtree_manager, SatState* sat_state) {
   Var* var = vtree_shannon_var(vtree);
- 
+
   if(sat_is_instantiated_var(var) || sat_is_irrelevant_var(var)) {
     count_dispatcher(count,learned_clause,vtree->right,vtree_manager,sat_state);
     if(*learned_clause==NULL) *count *= var2count(var);
@@ -143,7 +143,7 @@ void count_vtree_shannon(c2dWmc* count, Clause** learned_clause, DVtree* vtree, 
   if(!count_with_literal(count,learned_clause,nlit,vtree,vtree_manager,sat_state)) return;
   assert(*learned_clause==NULL);
   assert(!sat_instantiated_var(var));
-  c2dWmc ncount = *count; //save count conditioned on nlit 
+  c2dWmc ncount = *count; //save count conditioned on nlit
 
   *count = (pcount*sat_literal_weight(plit)) + (ncount*sat_literal_weight(nlit));
 }
@@ -163,7 +163,7 @@ void count_dispatcher(c2dWmc* count, Clause** learned_clause, DVtree* vtree, Vtr
   }
 
   //need to count
-  if(vtree_is_leaf(vtree)) 
+  if(vtree_is_leaf(vtree))
     count_vtree_leaf(count,learned_clause,vtree);
   else if(vtree_is_shannon_node(vtree))
     count_vtree_shannon(count,learned_clause,vtree,vtree_manager,sat_state);
@@ -176,7 +176,7 @@ void count_dispatcher(c2dWmc* count, Clause** learned_clause, DVtree* vtree, Vtr
     insert_cache(item,vtree,vtree_manager);
   }
 }
- 
+
 /******************************************************************************
  * end
  ******************************************************************************/

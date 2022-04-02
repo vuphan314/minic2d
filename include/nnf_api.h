@@ -70,7 +70,7 @@ Nnf* nnf_manager_extract_nnf(NnfManager* manager);
 void nnf_manager_save_to_file(const char* fname, NnfManager* manager, c2dSize* node_count, c2dSize* edge_count);
 
 //
-//operations on nnfs of type Nnf 
+//operations on nnfs of type Nnf
 //these nnfs are either extracted from an nnf manager, or loaded from file
 //
 
